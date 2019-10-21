@@ -1,9 +1,16 @@
+
+
+// i made this relative becasue my IE11/Edge in my VM machine
+// could not see it otherwise
+//const pathPrefix = "http://localhost:8888/api/";
+const pathPrefix = "../api/";
+
 $(document).ready(function() {
-	// Grab list of hotels
+	// Grab list of hotels - (can't Fetch() becasue IE11)
     $.ajax({
-        url: "../api/hotels/",
+        url: pathPrefix + "hotels/",
         success: function(jsonData) {
-            var hotels = jsonData.list;
+            let hotels = jsonData.list;
             //Alphabetize
             hotels.sort(function(a, b) {
                 a = a.name.toLowerCase();
@@ -12,9 +19,9 @@ $(document).ready(function() {
             });
 
             //Remove duplicates.  Loop through and if current name = previous name, remove.
-            var prevHotelName = "";
-            for (i in hotels) {
-                var currentHotelName = jsonData.list[i].name;
+            let prevHotelName = "";
+            for (let i in hotels) {
+                let currentHotelName = jsonData.list[i].name;
 
                 if (currentHotelName == prevHotelName) {
                     delete hotels[i];
@@ -24,8 +31,8 @@ $(document).ready(function() {
                 }
             }
             //Draw html loop
-            for (x in hotels) {
-                var listHTML = "<div class='hotel-list-item'><div class='hotel-list_title'>";
+            for (let x in hotels) {
+                let listHTML = "<div class='hotel-list-item'><div class='hotel-list_title'>";
                 listHTML += hotels[x].name;
                 listHTML += "</div><div class='hotel-list_price'>$";
                 listHTML += hotels[x].price.toFixed(2);
@@ -35,36 +42,36 @@ $(document).ready(function() {
         }
     });
 
-    // Grab hotel details
+    // Grab hotel details & display
     $.ajax({
-        url: "../api/hotels/venetian",
+        url: pathPrefix + "hotels/venetian",
         success: function(jsonData) {
-            var hotelName = jsonData.name;
-            var hotelPrice = jsonData.price;
-            var hotelAddress = jsonData.location.address;
+            let hotelName = jsonData.name;
+            let hotelPrice = jsonData.price;
+            let hotelAddress = jsonData.location.address;
             hotelAddress += ", " + jsonData.location.city;
             hotelAddress += ", " + jsonData.location.state;
             hotelAddress += " " + jsonData.location.postalCode;
-            var hotelDescription = jsonData.description;
+            let hotelDescription = jsonData.description;
             hotelDescription = hotelDescription.replace(/\r\n\r\n/g, "</p><p>");
-            var hotelArea = jsonData.location.areaName;
-            var medias = jsonData.media;
-            var hotelImageUrl = medias[0].href;
-            var hotelMapUrl = medias[1].href;
+            let hotelArea = jsonData.location.areaName;
+            let medias = jsonData.media;
+            let hotelImageUrl = medias[0].href;
+            let hotelMapUrl = medias[1].href;
             //get phone number and put into page and <a tel: attribute
-            var hotelPhone = jsonData.phoneNumber;
-            var hotelPhoneNoHyphens = hotelPhone.replace(/-/g, "");
+            let hotelPhone = jsonData.phoneNumber;
+            let hotelPhoneNoHyphens = hotelPhone.replace(/-/g, "");
             //Round star rating to the nearest 1/4 star and display
-            var starRating = jsonData.starRating;
+            let starRating = jsonData.starRating;
             //round to next 1/4 star because smaller partial stars look bad or broken.
-            var howManyFullStars = Math.floor(starRating);
+            let howManyFullStars = Math.floor(starRating);
             //get remaining decimal value  
-            var decimalRemainder = (starRating - Math.floor(starRating)).toFixed(2);
+            let decimalRemainder = (starRating - Math.floor(starRating)).toFixed(2);
             //round decimal  to nearest 1/4 star
-            var closestQuarter = Math.round(decimalRemainder * 4) / 4;
-            var finalStarNum = howManyFullStars + closestQuarter;
+            let closestQuarter = Math.round(decimalRemainder * 4) / 4;
+            let finalStarNum = howManyFullStars + closestQuarter;
             //convert finalStarNum into % of div to cover
-            var roundedStarPercent = finalStarNum * 20;
+            let roundedStarPercent = finalStarNum * 20;
 
             // Data into page
             $("#hotelPhone").attr('href', "tel:+" + hotelPhoneNoHyphens);
@@ -78,50 +85,50 @@ $(document).ready(function() {
             $("#hotelImageUrl").attr('src', hotelImageUrl);
             $("#hotelMapUrl").attr('src', hotelMapUrl);
 
-            var x = "";
-            for (i in jsonData.details) {
+            let x = "";
+            for (let i in jsonData.details) {
                 x += "<h2>" + jsonData.details[i].label + "</h2>";
                 x += "<p>" + jsonData.details[i].value + "</p>";
             }
             $("#hotelDetailsText").append(x);
-
         }
     });
 
     //Click handling
     //If a tab is clicked, change it's state and show it's related content:
-    var currentTab = "#hotelDescriptionTab"; //default
+    var currentTab = "#hotelDescriptionTab"; //default -  I used var becuase I might want this globally available later.
     
     $("#hotelDescriptionTab").click(function() {
-        if (currentTab != "#hotelDescriptionTab") {
+        if (currentTab != this) {
             //Remove 'selected' from current tabs
             $(currentTab).removeClass("tab--selected");
-            currentTab = "#hotelDescriptionTab";
+            currentTab = this;
             //add 'selected' state to current tab
-            $("#hotelDescriptionTab").addClass("tab--selected");
+            $(this).addClass("tab--selected");
             // hide all content divs, (or previous) and show selected
             $(".content-container").addClass("hidden");
             $("#hotelDiscription").removeClass("hidden");
         };
     });
     $("#hotelDetailsTab").click(function() {
-        if (currentTab != "#hotelDetailsTab") {
+        if (currentTab != this) {
             $(currentTab).removeClass("tab--selected");
-            currentTab = "#hotelDetailsTab";
-            $("#hotelDetailsTab").addClass("tab--selected");
+            currentTab = this;
+            $(this).addClass("tab--selected");
             $(".content-container").addClass("hidden");
             $("#hotelDetails").removeClass("hidden");
         };
     });
     $("#hotelLocationTab").click(function() {
-        if (currentTab != "hotelLocationTab") {
+        if (currentTab != this) {
             $(currentTab).removeClass("tab--selected");
-            currentTab = "#hotelLocationTab";
-            $("#hotelLocationTab").addClass("tab--selected");
+            currentTab = this;
+            $(this).addClass("tab--selected");
             $(".content-container").addClass("hidden");
             $("#hotelLocation").removeClass("hidden");
         };
     });
+    //If map pin icon is clicked:
     $("#hotelLocationLink").click(function() {
         if (currentTab != "#hotelLocation") {
             // Select the Map tab
@@ -134,22 +141,26 @@ $(document).ready(function() {
             $("#hotelLocation").show(1000);
         };
     });
+
     //Expand / condense description text	
-    $('#hideHotelDescription').hide();
+    $('#hideHotelDescription').hide(); // Default state- text is truncated
+    // If either is clicked toggle the height class and link text and icon
     $('#hideHotelDescription, #showHotelDescription').on(
         'click',
         function() {
-            $('#hideHotelDescription, #showHotelDescription').toggle();
-            $('#hotelDescriptionText').toggleClass("height-200");
+        	$('#hotelDescriptionText').toggleClass("height-200");
+            $('#hideHotelDescription, #showHotelDescription').toggle();    
         }
     );
+    
     //Expand / condense details text
-    $('#hideHotelDetails').hide();
+    $('#hideHotelDetails').hide(); // Default state- text is truncated
+    // If either is clicked toggle the height class and link text and icon
     $('#hideHotelDetails, #showHotelDetails').on(
         'click',
         function() {
+        	$('#hotelDetailsText').toggleClass("height-200");
             $('#hideHotelDetails, #showHotelDetails').toggle();
-            $('#hotelDetailsText').toggleClass("height-200");
         }
     );
 });
