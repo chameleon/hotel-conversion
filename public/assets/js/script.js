@@ -1,14 +1,13 @@
-
-
-// i made this relative becasue my IE11/Edge in my VM machine
+// I made this relative because my IE11/Edge in my VM machine
 // could not see it otherwise
-//const pathPrefix = "http://localhost:8888/api/";
-const pathPrefix = "../api/";
+// const ApiPathPrefix = "http://localhost:8888/api/";
+// Last update: 10/21 
+const ApiPathPrefix = "../api/";
 
 $(document).ready(function() {
 	// Grab list of hotels - (can't Fetch() becasue IE11)
     $.ajax({
-        url: pathPrefix + "hotels/",
+        url: ApiPathPrefix + "hotels/",
         success: function(jsonData) {
             let hotels = jsonData.list;
             //Alphabetize
@@ -44,7 +43,7 @@ $(document).ready(function() {
 
     // Grab hotel details & display
     $.ajax({
-        url: pathPrefix + "hotels/venetian",
+        url: ApiPathPrefix + "hotels/venetian",
         success: function(jsonData) {
             let hotelName = jsonData.name;
             let hotelPrice = jsonData.price;
@@ -58,7 +57,6 @@ $(document).ready(function() {
             let medias = jsonData.media;
             let hotelImageUrl = medias[0].href;
             let hotelMapUrl = medias[1].href;
-            //get phone number and put into page and <a tel: attribute
             let hotelPhone = jsonData.phoneNumber;
             let hotelPhoneNoHyphens = hotelPhone.replace(/-/g, "");
             //Round star rating to the nearest 1/4 star and display
